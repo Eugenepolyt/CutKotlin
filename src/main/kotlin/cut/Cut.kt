@@ -40,7 +40,7 @@ class Cut (private val c : Boolean, private val w : Boolean, private val oFile :
                 } else if (range.matches(Regex("""\d+-"""))) {
                     val n = range.dropLast(1).toInt()
                     if (n >= lineList.size) {
-                        outList.add(lineList.joinToString(separator = " "))
+                        outList.add("")
                     } else {
                         outList.add(lineList.slice(n - 1 until lineList.size).joinToString(separator = " "))
                     }
@@ -53,7 +53,7 @@ class Cut (private val c : Boolean, private val w : Boolean, private val oFile :
                             (listOfStartEnd[0] - 1) until lineList.size).joinToString(separator = " ")
                         )
                     } else outList.add(lineList.slice(
-                        (listOfStartEnd[0] - 1)..listOfStartEnd[1]).joinToString(separator = " ")
+                        (listOfStartEnd[0] - 1) until listOfStartEnd[1]).joinToString(separator = " ")
                     )
                 }
             }
@@ -69,14 +69,14 @@ class Cut (private val c : Boolean, private val w : Boolean, private val oFile :
                 } else if (range.matches(Regex("""\d+-"""))) {
                     val n = range.dropLast(1).toInt()
                     if (n >= line.length) {
-                        outList.add(line)
+                        outList.add("")
                     } else outList.add(line.slice((n - 1) until line.length))
                 } else {
                     val listOfStartEnd = mutableListOf<Int>()
                     Regex("""\d+""").findAll(range).forEach{listOfStartEnd.add(it.value.toInt())}
                     if (listOfStartEnd[1] >= line.length) {
                         outList.add(line.slice(listOfStartEnd[0] until line.length))
-                    } else outList.add(line.slice((listOfStartEnd[0] - 1)..listOfStartEnd[1]))
+                    } else outList.add(line.slice((listOfStartEnd[0] - 1) until listOfStartEnd[1]))
                 }
             }
         }
@@ -87,12 +87,15 @@ class Cut (private val c : Boolean, private val w : Boolean, private val oFile :
             }
         } else {
             File(oFile).bufferedWriter().use {
-                for (i in outList) {
-                    it.write(i)
+                for (i in 0 until outList.size - 1) {
+                    it.write(outList[i])
                     it.newLine()
                 }
+                it.write(outList.last())
             }
         }
 
     }
+
+
 }
