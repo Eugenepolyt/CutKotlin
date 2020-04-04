@@ -36,7 +36,7 @@ class CutStart {
         if (!c && !w) throw IllegalArgumentException()
 
         try {
-            Cut(c, w, oFile, iFile, range).start()
+            Cut(c, w, oFile, iFile, range).reader()
         } catch (e: IOException) {
             println(e.message)
             return

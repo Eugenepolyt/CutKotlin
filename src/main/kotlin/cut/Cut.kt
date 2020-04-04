@@ -11,7 +11,7 @@ class Cut (private val c : Boolean, private val w : Boolean, private val oFile :
     @Throws(IOException::class)
 
 
-    fun start(){
+    fun reader(){
         val text : Iterator<String> = if (iFile == ""){
             println("Enter text : ")
             System.`in`.bufferedReader().lineSequence().iterator()
