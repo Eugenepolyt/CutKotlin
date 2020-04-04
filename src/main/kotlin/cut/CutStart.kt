@@ -20,17 +20,13 @@ class CutStart {
     @Argument(metaVar = "InputFile", required = false, usage = "InputFile", index = 0)
     private var iFile: String = ""
 
-    fun start(args : Array<String>){
-        val listOfArgs = args.toList()
-        val range = listOfArgs.last()
-        if (!range.matches(Regex("""-\d+|\d+-\d+|\d+-"""))) {
-            println("cut [-c|-w] [-o ofile] [file] range")
-            throw IllegalArgumentException()
-        }
+    @Option(name = "-r", metaVar = "OutputFile",  required = true, usage = "OutputFile")
+    private var range: String = ""
 
+    fun start(args : Array<String>){
         val parser = CmdLineParser(this)
         try {
-            parser.parseArgument(listOfArgs.subList(0, listOfArgs.size - 1))
+            parser.parseArgument(*args)
         } catch (e: CmdLineException) {
             println(e.message)
             println("cut [-c|-w] [-o ofile] [file] range")
@@ -40,7 +36,7 @@ class CutStart {
         if (!c && !w) throw IllegalArgumentException()
 
         try {
-            Cut(c, w, oFile, iFile, range).reader()
+            Cut(c, w, oFile, iFile, range).start()
         } catch (e: IOException) {
             println(e.message)
             return

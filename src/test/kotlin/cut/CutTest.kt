@@ -25,8 +25,9 @@ class CutTest {
             it.write("word")
         }
 
-        CutStart().start(arrayOf("-w", "-o", "text.txt", "words.txt", "-2"))
-        assertEquals(File("accept.txt").readText(),File("text.txt").readText()
+        CutStart().start(arrayOf("-w", "-o", "text.txt", "words.txt", "-r", "-2"))
+        assertEquals(
+            File("accept.txt").readText(), File("text.txt").readText()
         )
 
         fileAccept.bufferedWriter().use {
@@ -36,8 +37,9 @@ class CutTest {
             it.newLine()
         }
 
-        CutStart().start(arrayOf("-w", "-o", "text.txt", "words.txt", "3-"))
-        assertEquals(File("accept.txt").readText(),File("text.txt").readText()
+        CutStart().start(arrayOf("-w", "-o", "text.txt", "words.txt", "-r", "3-"))
+        assertEquals(
+            File("accept.txt").readText(), File("text.txt").readText()
         )
 
         fileAccept.bufferedWriter().use {
@@ -48,8 +50,9 @@ class CutTest {
             it.write("word")
         }
 
-        CutStart().start(arrayOf("-w", "-o", "text.txt", "words.txt", "1-3"))
-        assertEquals(File("accept.txt").readText(),File("text.txt").readText()
+        CutStart().start(arrayOf("-w", "-o", "text.txt", "words.txt", "-r", "1-3"))
+        assertEquals(
+            File("accept.txt").readText(), File("text.txt").readText()
         )
 
         File("words.txt").delete()
@@ -77,8 +80,9 @@ class CutTest {
             it.write("He--LLo")
         }
 
-        CutStart().start(arrayOf("-c", "-o", "text.txt", "words.txt", "-10"))
-        assertEquals(File("accept.txt").readText(),File("text.txt").readText()
+        CutStart().start(arrayOf("-c", "-o", "text.txt", "words.txt", "-r", "-10"))
+        assertEquals(
+            File("accept.txt").readText(), File("text.txt").readText()
         )
 
         fileAccept.bufferedWriter().use {
@@ -89,8 +93,9 @@ class CutTest {
             it.write("--LLo")
         }
 
-        CutStart().start(arrayOf("-c", "-o", "text.txt", "words.txt", "3-"))
-        assertEquals(File("accept.txt").readText(),File("text.txt").readText()
+        CutStart().start(arrayOf("-c", "-o", "text.txt", "words.txt", "-r", "3-"))
+        assertEquals(
+            File("accept.txt").readText(), File("text.txt").readText()
         )
 
         fileAccept.bufferedWriter().use {
@@ -100,8 +105,9 @@ class CutTest {
             it.newLine()
             it.write("--")
         }
-        CutStart().start(arrayOf("-c", "-o", "text.txt", "words.txt", "3-4"))
-        assertEquals(File("accept.txt").readText(),File("text.txt").readText()
+        CutStart().start(arrayOf("-c", "-o", "text.txt", "words.txt", "-r", "3-4"))
+        assertEquals(
+            File("accept.txt").readText(), File("text.txt").readText()
         )
 
         File("words.txt").delete()
