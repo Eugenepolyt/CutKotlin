@@ -37,7 +37,7 @@ class CutStart {
         if (!c && !w) throw IllegalArgumentException()
 
         try {
-            iFile?.let { oFile?.let { it1 -> Cut(c, w, it1, it, range).reader() } }
+            Cut(c, w, oFile, iFile, range).reader()
         } catch (e: IOException) {
             println(e.message)
             return

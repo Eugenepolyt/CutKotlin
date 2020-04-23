@@ -4,36 +4,52 @@ import java.io.File
 import java.io.IOException
 import java.lang.IllegalArgumentException
 
-class Cut (private val c : Boolean, private val w : Boolean, private val oFile : File,
-           private val iFile : File, private var range : String) {
+class Cut(private val c: Boolean, private val w: Boolean, private val oFile: File?,
+          private val iFile: File?, private var range: String) {
 
     private var parsedRange = -1 to -1
 
     @Throws(IOException::class)
     fun reader(){
-        val text : Iterator<String> = iFile.bufferedReader().lineSequence().iterator()
+        val text : Iterator<String> = if (iFile === null){
+            println("Enter text : ")
+            System.`in`.bufferedReader().lineSequence().iterator()
+        } else{
+            iFile.bufferedReader().lineSequence().iterator()
+        }
 
         parseRange()
 
-        var skipFirstSpace = true
-        oFile.bufferedWriter().use {
+        if (oFile === null) {
+
             while (w && text.hasNext()) {
-                if (skipFirstSpace) {
-                    it.write(cutW(text.next()))
-                    skipFirstSpace = false
-                    continue
-                }
-                it.newLine()
-                it.write(cutW(text.next()))
+                println(cutW(text.next()))
             }
+
             while (c && text.hasNext()) {
-                if (skipFirstSpace) {
-                    it.write(cutC(text.next()))
-                    skipFirstSpace = false
-                    continue
+                println(cutC(text.next()))
+            }
+        } else {
+            var skipFirstSpace = true
+            oFile.bufferedWriter().use {
+                while (w && text.hasNext()) {
+                    if (skipFirstSpace) {
+                        it.write(cutW(text.next()))
+                        skipFirstSpace = false
+                        continue
+                    }
+                    it.newLine()
+                    it.write(cutW(text.next()))
                 }
-                it.newLine()
-                it.write(cutC(text.next()))
+                while (c && text.hasNext()) {
+                    if (skipFirstSpace) {
+                        it.write(cutC(text.next()))
+                        skipFirstSpace = false
+                        continue
+                    }
+                    it.newLine()
+                    it.write(cutC(text.next()))
+                }
             }
         }
 
