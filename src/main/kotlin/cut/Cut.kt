@@ -2,52 +2,38 @@ package cut
 
 import java.io.File
 import java.io.IOException
+import java.lang.IllegalArgumentException
 
-class Cut (private val c : Boolean, private val w : Boolean, private val oFile : String,
-           private val iFile : String, private val range : String) {
+class Cut (private val c : Boolean, private val w : Boolean, private val oFile : File,
+           private val iFile : File, private var range : String) {
+
+    private var parsedRange = -1 to -1
 
     @Throws(IOException::class)
-
-
     fun reader(){
-        val text : Iterator<String> = if (iFile == ""){
-            println("Enter text : ")
-            System.`in`.bufferedReader().lineSequence().iterator()
-        } else{
-            File(iFile).bufferedReader().lineSequence().iterator()
-        }
+        val text : Iterator<String> = iFile.bufferedReader().lineSequence().iterator()
 
+        parseRange()
 
-        if (oFile == "") {
-
+        var skipFirstSpace = true
+        oFile.bufferedWriter().use {
             while (w && text.hasNext()) {
-                println(cutW(text.next()))
-            }
-
-            while (c && text.hasNext()) {
-                println(cutC(text.next()))
-            }
-        } else {
-            var skipFirstSpace = true
-            File(oFile).bufferedWriter().use {
-                while (w && text.hasNext()) {
-                    if (skipFirstSpace) {
-                        it.write(cutW(text.next()))
-                        skipFirstSpace = false
-                        continue
-                    }
-                    it.newLine()
+                if (skipFirstSpace) {
                     it.write(cutW(text.next()))
+                    skipFirstSpace = false
+                    continue
                 }
-                while (c && text.hasNext()) {
-                    if (skipFirstSpace) {
-                        it.write(cutC(text.next()))
-                        skipFirstSpace = false
-                        continue
-                    }
-                    it.newLine()
+                it.newLine()
+                it.write(cutW(text.next()))
+            }
+            while (c && text.hasNext()) {
+                if (skipFirstSpace) {
                     it.write(cutC(text.next()))
+                    skipFirstSpace = false
+                    continue
                 }
+                it.newLine()
+                it.write(cutC(text.next()))
             }
         }
 
@@ -57,54 +43,60 @@ class Cut (private val c : Boolean, private val w : Boolean, private val oFile :
     private fun cutW (entry: String): String {
         val lineList = mutableListOf<String>()
         Regex("""[^ ]+""").findAll(entry).forEach { lineList.add(it.value) }
-        if (range.matches(Regex("""-\d+"""))) {
-            val k = range.drop(1).toInt()
-            return if (k >= lineList.size) {
-                lineList.joinToString(separator = " ")
-            } else {
-                lineList.slice(0 until k).joinToString(separator = " ")
-            }
+        return when (range) {
+            "1" -> if (parsedRange.first >= lineList.size) {
+                        lineList.joinToString(separator = " ")
+                    } else {
+                        lineList.slice(0 until parsedRange.first).joinToString(separator = " ")
+                    }
 
-        } else if (range.matches(Regex("""\d+-"""))) {
-            val n = range.dropLast(1).toInt()
-            return if (n >= lineList.size) {
-                ""
-            } else {
-                lineList.slice(n - 1 until lineList.size).joinToString(separator = " ")
-            }
+            "2" ->  if (parsedRange.first >= lineList.size) {
+                        ""
+                     } else {
+                         lineList.slice(parsedRange.first - 1 until lineList.size).joinToString(separator = " ")
+                     }
 
-        } else {
-            val listOfStartEnd = mutableListOf<Int>()
-            Regex("""\d+""").findAll(range).forEach { listOfStartEnd.add(it.value.toInt()) }
-            return if (listOfStartEnd[1] >= lineList.size) {
-                lineList.slice((listOfStartEnd[0] - 1) until lineList.size).joinToString(separator = " ")
+            "3" ->  if (parsedRange.second >= lineList.size) {
+                        lineList.slice((parsedRange.first - 1) until lineList.size).joinToString(separator = " ")
 
-            } else lineList.slice(
-                (listOfStartEnd[0] - 1) until listOfStartEnd[1]
-            ).joinToString(separator = " ")
-
+                     } else lineList.slice((parsedRange.first - 1) until parsedRange.second)
+                                                    .joinToString(separator = " ")
+            else -> throw (IllegalArgumentException())
         }
 
     }
 
     private fun cutC (entry: String): String {
+        return when (range) {
+            "1" -> if (parsedRange.first >= entry.length) {
+                        entry
+                    } else entry.slice(0 until parsedRange.first)
+            "2" ->  if (parsedRange.first >= entry.length) {
+                         ""
+                    } else entry.slice((parsedRange.first - 1) until entry.length)
+            "3" -> if (parsedRange.second >= entry.length) {
+                        entry.slice(parsedRange.first until entry.length)
+                    } else entry.slice((parsedRange.first - 1) until parsedRange.second)
+
+            else -> throw (IllegalArgumentException())
+        }
+    }
+
+    private fun parseRange() {
         if (range.matches(Regex("""-\d+"""))) {
-            val k = range.drop(1).toInt()
-            return if (k >= entry.length) {
-                entry
-            } else entry.slice(0 until k)
+            parsedRange =  range.drop(1).toInt() to -1
+            range = "1"
         } else if (range.matches(Regex("""\d+-"""))) {
-            val n = range.dropLast(1).toInt()
-            return if (n >= entry.length) {
-                ""
-            } else entry.slice((n - 1) until entry.length)
+            parsedRange = range.dropLast(1).toInt() to -1
+            range = "2"
+
         } else {
             val listOfStartEnd = mutableListOf<Int>()
             Regex("""\d+""").findAll(range).forEach { listOfStartEnd.add(it.value.toInt()) }
-            return if (listOfStartEnd[1] >= entry.length) {
-                entry.slice(listOfStartEnd[0] until entry.length)
-            } else entry.slice((listOfStartEnd[0] - 1) until listOfStartEnd[1])
+            parsedRange = listOfStartEnd[0] to listOfStartEnd[1]
+            range = "3"
         }
+
     }
 
 }

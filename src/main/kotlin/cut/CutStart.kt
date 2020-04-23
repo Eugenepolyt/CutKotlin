@@ -4,6 +4,7 @@ import org.kohsuke.args4j.Argument
 import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
 import org.kohsuke.args4j.Option
+import java.io.File
 import java.io.IOException
 
 class CutStart {
@@ -15,10 +16,10 @@ class CutStart {
     private var w: Boolean = false
 
     @Option(name = "-o", metaVar = "OutputFile",  required = false, usage = "OutputFile")
-    private var oFile: String = ""
+    private var oFile: File? = null
 
     @Argument(metaVar = "InputFile", required = false, usage = "InputFile", index = 0)
-    private var iFile: String = ""
+    private var iFile: File? = null
 
     @Option(name = "-r", metaVar = "OutputFile",  required = true, usage = "OutputFile")
     private var range: String = ""
@@ -36,7 +37,7 @@ class CutStart {
         if (!c && !w) throw IllegalArgumentException()
 
         try {
-            Cut(c, w, oFile, iFile, range).reader()
+            iFile?.let { oFile?.let { it1 -> Cut(c, w, it1, it, range).reader() } }
         } catch (e: IOException) {
             println(e.message)
             return
