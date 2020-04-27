@@ -76,7 +76,7 @@ class Cut(private val c: Boolean, private val w: Boolean, private val oFile: Fil
                      } else if (parsedRange.first >= lineList.size) ""
                     else lineList.slice((parsedRange.first - 1) until parsedRange.second)
                                                     .joinToString(separator = " ")
-            else -> throw (IllegalArgumentException())
+            else -> ""
         }
 
     }
@@ -94,7 +94,7 @@ class Cut(private val c: Boolean, private val w: Boolean, private val oFile: Fil
                     } else if (parsedRange.first >= entry.length) ""
                         else entry.slice((parsedRange.first - 1) until parsedRange.second)
 
-            else -> throw (IllegalArgumentException())
+            else -> ""
         }
     }
 
@@ -106,12 +106,12 @@ class Cut(private val c: Boolean, private val w: Boolean, private val oFile: Fil
             parsedRange = range.dropLast(1).toInt() to -1
             range = "2"
 
-        } else {
+        } else if (range.matches(Regex("""\d+-\d+"""))) {
             val listOfStartEnd = mutableListOf<Int>()
             Regex("""\d+""").findAll(range).forEach { listOfStartEnd.add(it.value.toInt()) }
             parsedRange = listOfStartEnd[0] to listOfStartEnd[1]
             range = "3"
-        }
+        } else throw IllegalArgumentException("Wrong range")
 
     }
 
