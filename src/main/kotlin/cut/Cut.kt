@@ -61,7 +61,7 @@ class Cut(private val c: Boolean, private val w: Boolean, private val oFile: Fil
         Regex("""[^ ]+""").findAll(entry).forEach { lineList.add(it.value) }
         return when (range) {
             "1" -> if (parsedRange.first >= lineList.size) {
-                        lineList.joinToString(separator = " ")
+                        ""
                     } else {
                         lineList.slice(0 until parsedRange.first).joinToString(separator = " ")
                     }
@@ -85,7 +85,7 @@ class Cut(private val c: Boolean, private val w: Boolean, private val oFile: Fil
     private fun cutC (entry: String): String {
         return when (range) {
             "1" -> if (parsedRange.first >= entry.length) {
-                        entry
+                        ""
                     } else entry.slice(0 until parsedRange.first)
             "2" ->  if (parsedRange.first >= entry.length) {
                          ""
