@@ -22,7 +22,6 @@ class CutTest {
             it.newLine()
             it.write("And some")
             it.newLine()
-            it.write("word")
         }
 
         CutStart().start(arrayOf("-w", "-o", "text.txt", "words.txt", "-r", "-2"))
@@ -75,9 +74,7 @@ class CutTest {
         fileAccept.bufferedWriter().use {
             it.write("---Symbols")
             it.newLine()
-            it.write("...TEST...")
             it.newLine()
-            it.write("He--LLo")
         }
 
         CutStart().start(arrayOf("-c", "-o", "text.txt", "words.txt", "-r", "-10"))

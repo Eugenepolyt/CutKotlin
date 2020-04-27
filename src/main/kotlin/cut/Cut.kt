@@ -65,17 +65,16 @@ class Cut(private val c: Boolean, private val w: Boolean, private val oFile: Fil
                     } else {
                         lineList.slice(0 until parsedRange.first).joinToString(separator = " ")
                     }
-
             "2" ->  if (parsedRange.first >= lineList.size) {
                         ""
                      } else {
                          lineList.slice(parsedRange.first - 1 until lineList.size).joinToString(separator = " ")
                      }
-
             "3" ->  if (parsedRange.second >= lineList.size) {
                         lineList.slice((parsedRange.first - 1) until lineList.size).joinToString(separator = " ")
 
-                     } else lineList.slice((parsedRange.first - 1) until parsedRange.second)
+                     } else if (parsedRange.first >= lineList.size) ""
+                    else lineList.slice((parsedRange.first - 1) until parsedRange.second)
                                                     .joinToString(separator = " ")
             else -> throw (IllegalArgumentException())
         }
@@ -88,11 +87,12 @@ class Cut(private val c: Boolean, private val w: Boolean, private val oFile: Fil
                         ""
                     } else entry.slice(0 until parsedRange.first)
             "2" ->  if (parsedRange.first >= entry.length) {
-                         ""
+                        ""
                     } else entry.slice((parsedRange.first - 1) until entry.length)
             "3" -> if (parsedRange.second >= entry.length) {
                         entry.slice(parsedRange.first until entry.length)
-                    } else entry.slice((parsedRange.first - 1) until parsedRange.second)
+                    } else if (parsedRange.first >= entry.length) ""
+                        else entry.slice((parsedRange.first - 1) until parsedRange.second)
 
             else -> throw (IllegalArgumentException())
         }
